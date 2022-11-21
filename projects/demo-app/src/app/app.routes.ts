@@ -1,5 +1,7 @@
-import { Routes } from "@angular/router";
+import { inject } from "@angular/core";
+import { Router, Routes } from "@angular/router";
 import { HomeComponent } from "./home/home.component";
+import { AuthService } from "./shell/auth.service";
 
 export const APP_ROUTES: Routes = [
     {
@@ -13,6 +15,7 @@ export const APP_ROUTES: Routes = [
     },
     {
         path: 'flight-booking',
+        canMatch: [() => inject(AuthService).accessAllowed || inject(Router).createUrlTree(['/about'])],
         loadChildren: () =>
             import('./booking/flight-booking.routes')
                 .then(m => m.FLIGHT_BOOKING_ROUTES)
