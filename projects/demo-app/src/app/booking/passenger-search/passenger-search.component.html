@@ -1,0 +1,33 @@
+<div class="card">
+  <div class="card-header">
+    <h2 class="card-title">Passengers</h2>
+  </div>
+
+  <div class="card-body">
+    <!-- <pre>{{passengers | json}}</pre> -->
+    <table class="table table-condensed">
+      <thead>
+        <tr>
+          <th>Id</th>
+          <th>FirstName</th>
+          <th>Name</th>
+          <th>Bonus Miles</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let p of passengers">
+          <td>
+            <span class="badge badge-pill badge-info">
+              {{ p.id }}
+            </span>
+          </td>
+          <td>{{ p.firstName }}</td>
+          <td>{{ p.name }}</td>
+          <td>{{ p.bonusMiles }}</td>
+          <td>{{ p.passengerStatus }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
