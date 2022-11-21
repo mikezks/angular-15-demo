@@ -1,7 +1,7 @@
 import { AsyncPipe, CommonModule, JsonPipe, NgForOf, NgIf } from "@angular/common";
-import { Component, Inject, OnInit } from "@angular/core";
+import { ApplicationRef, Component, createComponent, EnvironmentInjector, inject, Inject, OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { CityValidator } from "@demo/shared";
+import { AfterViewInitDirective, CityValidator } from "@demo/shared";
 import { FlightCardComponent } from "../flight-card/flight-card.component";
 import { Store } from "@ngrx/store";
 import { BookingSlice } from "../+state/reducers";
@@ -9,29 +9,30 @@ import { selectFlights } from "../+state/selectors";
 import { take } from "rxjs";
 import { loadFlights } from "../+state/actions";
 import { delayFlight } from "../+state/actions";
+import { FlightInfoComponent } from "../flight-info/flight-info.component";
 
 @Component({
   standalone: true,
   imports: [
-    // CommonModule, 
+    // CommonModule,
     NgIf,
     NgForOf,
     AsyncPipe,
     JsonPipe,
 
-    FormsModule, 
+    FormsModule,
     FlightCardComponent,
     CityValidator,
   ],
+  hostDirectives: [ AfterViewInitDirective],
   selector: 'flight-search',
   templateUrl: './flight-search.component.html'
 })
 export class FlightSearchComponent implements OnInit {
-
   from = 'Hamburg'; // in Germany
   to = 'Graz'; // in Austria
   urgent = false;
-  
+
   flights$ = this.store.select(selectFlights);
 
   basket: { [id: number]: boolean } = {
@@ -41,17 +42,32 @@ export class FlightSearchComponent implements OnInit {
 
   constructor(
     @Inject(Store) private store: Store<BookingSlice>) {
+
+    this.addFlightInfo();
   }
 
   ngOnInit(): void {
+  }
+
+  private addFlightInfo(): void {
+    const appRef = inject(ApplicationRef);
+    const environmentInjector = inject(EnvironmentInjector);
+
+    inject(AfterViewInitDirective).afterViewInit$.subscribe(() => {
+      const hostElement = document.getElementById('flight-info-host');
+      if (hostElement) {
+        const compRef = createComponent(FlightInfoComponent, { hostElement, environmentInjector });
+        appRef.attachView(compRef.hostView);
+      }
+    });
   }
 
   search(): void {
     if (!this.from || !this.to) return;
 
     this.store.dispatch(loadFlights({
-      from: this.from, 
-      to: this.to 
+      from: this.from,
+      to: this.to
     }));
   }
 
