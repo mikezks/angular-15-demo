@@ -1,12 +1,16 @@
 import { CommonModule } from "@angular/common";
 import { Component, Input } from "@angular/core";
+import { ShowDirective } from "@demo/shared";
 
 @Component({
   standalone: true,
   selector: 'app-lazy',
-  imports: [CommonModule],
+  imports: [
+    CommonModule,
+    ShowDirective
+  ],
   template: `
-    <div class="card" *ngIf="visible">
+    <div class="card" *show="visible">
       <div class="card-header">
         <h2 class="card-title">{{ title }}</h2>
       </div>
