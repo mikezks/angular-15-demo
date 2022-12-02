@@ -18,10 +18,6 @@ export class ShowDirective implements OnDestroy {
   private ngIfDir = inject(NgIf);
   private destroy$ = new Subject<void>();
 
-  @Input() set show(visibility: boolean) {
-    this.setVisibility(visibility);
-  }
-
   constructor() {
     this.initVisibilityStream();
     this.destroy$.subscribe(() => console.log('ShowDirective destroyed!'));
