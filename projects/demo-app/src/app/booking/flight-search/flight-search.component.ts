@@ -1,3 +1,4 @@
+import { AuthService } from './../../shell/auth.service';
 import { AsyncPipe, CommonModule, JsonPipe, NgForOf, NgIf } from "@angular/common";
 import { ApplicationRef, Component, createComponent, EnvironmentInjector, inject, Inject, OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
@@ -26,7 +27,13 @@ import { FlightInfoComponent } from "../flight-info/flight-info.component";
   ],
   hostDirectives: [ AfterViewInitDirective],
   selector: 'flight-search',
-  templateUrl: './flight-search.component.html'
+  templateUrl: './flight-search.component.html',
+  providers: [
+    {
+      provide: AuthService,
+      useValue: { accessAllowed: false }
+    }
+  ]
 })
 export class FlightSearchComponent implements OnInit {
   from = 'Hamburg'; // in Germany
@@ -39,6 +46,9 @@ export class FlightSearchComponent implements OnInit {
     3: true,
     5: true
   };
+
+  // authService = inject(AuthService);
+  authService = inject(EnvironmentInjector).runInContext(() => inject(AuthService));
 
   constructor(
     @Inject(Store) private store: Store<BookingSlice>) {
