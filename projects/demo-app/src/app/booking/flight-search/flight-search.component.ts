@@ -1,6 +1,6 @@
 import { AuthService } from './../../shell/auth.service';
 import { AsyncPipe, CommonModule, JsonPipe, NgForOf, NgIf } from "@angular/common";
-import { ApplicationRef, Component, createComponent, EnvironmentInjector, inject, Inject, OnInit } from "@angular/core";
+import { ApplicationRef, Component, createComponent, EnvironmentInjector, inject, Inject, Injector, OnInit, SkipSelf } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { AfterViewInitDirective, CityValidator } from "@demo/shared";
 import { FlightCardComponent } from "../flight-card/flight-card.component";
@@ -11,6 +11,7 @@ import { take } from "rxjs";
 import { loadFlights } from "../+state/actions";
 import { delayFlight } from "../+state/actions";
 import { FlightInfoComponent } from "../flight-info/flight-info.component";
+import { INJECTOR_NODE_NAME } from '../../app.tokens';
 
 @Component({
   standalone: true,
@@ -32,6 +33,10 @@ import { FlightInfoComponent } from "../flight-info/flight-info.component";
     {
       provide: AuthService,
       useValue: { accessAllowed: false }
+    },
+    {
+      provide: INJECTOR_NODE_NAME,
+      useValue: 'Flight Search'
     }
   ]
 })
@@ -49,11 +54,29 @@ export class FlightSearchComponent implements OnInit {
 
   // authService = inject(AuthService);
   authService = inject(EnvironmentInjector).runInContext(() => inject(AuthService));
+  flightSearchInjector = inject(Injector);
+  flightBookingInjector = this.flightSearchInjector
+    .get(Injector, null, { skipSelf: true })!
+    .get(Injector, null, { skipSelf: true })!;
+  appComponentInjector = this.flightBookingInjector
+    .get(Injector, null, { skipSelf: true })!
+    .get(Injector, null, { skipSelf: true })!;
+  bookingRoutesInjector = inject(EnvironmentInjector);
+  appRootInjector = inject(EnvironmentInjector)
+    .get(EnvironmentInjector, null, { skipSelf: true })!
+    .get(EnvironmentInjector, null, { skipSelf: true })!;
 
   constructor(
     @Inject(Store) private store: Store<BookingSlice>) {
 
     this.addFlightInfo();
+    console.log([
+      { flightSearch: this.flightSearchInjector.get(INJECTOR_NODE_NAME), injector: this.flightSearchInjector },
+      { flightBooking: this.flightBookingInjector.get(INJECTOR_NODE_NAME), injector: this.flightBookingInjector },
+      { appComponent: this.appComponentInjector.get(INJECTOR_NODE_NAME), injector: this.appComponentInjector },
+      { bookingRoutes: this.bookingRoutesInjector.get(INJECTOR_NODE_NAME), injector: this.bookingRoutesInjector },
+      { appRoot: this.appRootInjector.get(INJECTOR_NODE_NAME), injector: this.appRootInjector }
+    ]);
   }
 
   ngOnInit(): void {

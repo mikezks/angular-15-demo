@@ -2,6 +2,7 @@ import { provideHttpClient, withInterceptors, withRequestsMadeViaParent } from "
 import { Routes } from "@angular/router";
 import { provideEffects } from "@ngrx/effects";
 import { provideState } from "@ngrx/store";
+import { INJECTOR_NODE_NAME } from "../app.tokens";
 import { BookingEffects } from "./+state/effects";
 import { bookingFeature } from "./+state/reducers";
 import { FlightBookingComponent } from "./flight-booking.component";
@@ -23,6 +24,11 @@ export const FLIGHT_BOOKING_ROUTES: Routes = [{
       withRequestsMadeViaParent(),
       withInterceptors([bookingInterceptor])
     ),
+
+    {
+      provide: INJECTOR_NODE_NAME,
+      useValue: 'Booking Routes'
+    }
   ],
   children: [
     {

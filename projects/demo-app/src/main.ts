@@ -8,6 +8,7 @@ import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { reducer } from './app/+state';
 import { AppComponent } from './app/app.component';
 import { APP_ROUTES } from './app/app.routes';
+import { INJECTOR_NODE_NAME } from './app/app.tokens';
 
 import { authInterceptor } from './app/shared/auth.interceptor';
 import { LegacyInterceptor } from './app/shared/legacy.interceptor';
@@ -25,6 +26,11 @@ bootstrapApplication(AppComponent, {
       provide: HTTP_INTERCEPTORS,
       useClass: LegacyInterceptor,
       multi: true,
+    },
+
+    {
+      provide: INJECTOR_NODE_NAME,
+      useValue: 'App Root'
     },
 
     provideRouter(APP_ROUTES,
